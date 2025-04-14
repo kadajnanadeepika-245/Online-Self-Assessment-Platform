@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Assessment Platform</title>
+    <style>
+        :root {
+            --bg-color: linear-gradient(135deg, #ff6f62, #de4463, #6b5b95);
+            --container-bg: rgba(255, 255, 255, 0.1);
+            --text-color: #ffffff;
+            --input-bg: #f4f4f4;
+            --input-text: #333333;
+            --border-color: #ffffff;
+            --button-bg: linear-gradient(135deg, #ffcc00, #ff9900);
+        }
+
+        body.dark-mode {
+            --bg-color: #121212;
+            --container-bg: rgba(30, 41, 59, 0.8);
+            --text-color: #e0e0e0;
+            --input-bg: #1e293b;
+            --input-text: #ffffff;
+            --border-color: #00bcd4;
+            --button-bg: linear-gradient(135deg, #00bcd4, #008ba3);
+        }
+
+        body {
+            font-family: 'Trebuchet MS', sans-serif;
+            background: var(--bg-color);
+            color: var(--text-color);
+            text-align: center;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .container {
+            background: var(--container-bg);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease-in-out;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            color: var(--text-color);
+            text-shadow: 2px 2px 4px #000000;
+        }
+
+        p {
+            font-size: 1.2em;
+            margin: 15px 0;
+        }
+
+        label {
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        input[type="text"], select {
+            padding: 10px;
+            margin: 10px 0;
+            width: 80%;
+            max-width: 400px;
+            border: 2px solid var(--border-color);
+            border-radius: 25px;
+            background-color: var(--input-bg);
+            color: var(--input-text);
+            text-align: center;
+            transition: all 0.3s ease-in-out;
+        }
+
+        button {
+            background: var(--button-bg);
+            border: none;
+            color: #ffffff;
+            padding: 15px 30px;
+            margin: 10px;
+            text-align: center;
+            font-size: 1.2em;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+        }
+
+        .toggle-container {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+        }
+
+        .toggle-switch {
+            width: 50px;
+            height: 25px;
+            background-color: #ccc;
+            border-radius: 15px;
+            position: relative;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .toggle-switch:before {
+            content: "";
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: #fff;
+            border-radius: 50%;
+            top: 50%;
+            left: 5px;
+            transform: translateY(-50%);
+            transition: transform 0.3s ease;
+        }
+
+        body.dark-mode .toggle-switch {
+            background-color: #00bcd4;
+        }
+
+        body.dark-mode .toggle-switch:before {
+            transform: translate(25px, -50%);
+        }
+
+        footer {
+            position: fixed;
+            bottom: 10px;
+            width: 100%;
+            text-align: center;
+            font-size: 0.9em;
+            color: var(--text-color);
+        }
+
+        /* Blurred background image */
+        body::before {
+            content: "";
+            background-image: url("https://i.pinimg.com/736x/06/34/45/06344582e113fbc22610af26e49c7d10.jpg"); /* ✅ Local file */
+            /* OR use a web image: */
+            /* background-image: url("https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1920&q=80"); */
+            background-size: cover;
+            background-position: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            filter: blur(8px);
+            opacity: 0.8;
+        }
+    </style>
+
+    <script>
+        let tabSwitchCount = 0;
+        let examStarted = false;
+
+        function startExam(event) {
+            event.preventDefault();
+            let name = document.getElementById("nam").value.trim();
+            let regNum = document.getElementById("rn").value.trim();
+            let subject = document.getElementById("subject").value;
+
+            if (name === "" || regNum === "" || subject === "") {
+                alert("Please enter your Name, Registration Number, and select a Subject.");
+                return;
+            }
+
+            const subjectLinks = {
+                "DSA": "wb1.11.html",
+                "WEBTEC": "wb1.12.html",
+                "MATH": "wb1.14.html",
+                "JAVA": "wb1.15.html",
+                "DBMS": "wb1.16.html",
+                "C": "wb1.17.html",
+                "PYTHON": "wb1.18.html"
+            };
+
+            if (subjectLinks[subject]) {
+                alert("Your exam will start in 5 seconds. Please do not switch tabs during the exam.");
+                setTimeout(() => {
+                    examStarted = true;
+                    window.location.href = subjectLinks[subject];
+                }, 5000);
+            } else {
+                alert("Invalid subject! Please select a valid subject from the list.");
+            }
+        }
+
+        function toggleDarkMode() {
+            document.body.classList.toggle("dark-mode");
+            localStorage.setItem("darkMode", document.body.classList.contains("dark-mode") ? "enabled" : "disabled");
+        }
+
+        window.onload = function () {
+            if (localStorage.getItem("darkMode") === "enabled") {
+                document.body.classList.add("dark-mode");
+            }
+
+            document.addEventListener("visibilitychange", function () {
+                if (examStarted && document.hidden) {
+                    tabSwitchCount++;
+                    if (tabSwitchCount === 1) {
+                        alert("Warning: Do not switch tabs! The exam will be submitted automatically on the next switch.");
+                    } else if (tabSwitchCount >= 2) {
+                        alert("You switched tabs again! The exam is being submitted automatically.");
+                        window.location.href = "submission_page.html";
+                    }
+                }
+            });
+        };
+    </script>
+</head>
+
+<body>
+
+    <div class="toggle-container">
+        <div class="toggle-switch" onclick="toggleDarkMode()"></div>
+    </div>
+
+    <div class="container">
+        <h1>Online Self-Assessment Platform</h1>
+        <form onsubmit="startExam(event)">
+            <p>
+                <label for="nam">Name: </label><br>
+                <input type="text" id="nam" placeholder="Enter your name" required>
+            </p>
+            <p>
+                <label for="rn">Registration Number: </label><br>
+                <input type="text" id="rn" placeholder="Enter your registration number" required>
+            </p>
+            <p>
+                <label for="subject">Select a Subject: </label><br>
+                <select id="subject" required>
+                    <option value="">-- Select a Subject --</option>
+                    <option value="DSA">DSA</option>
+                    <option value="WEBTEC">Web Technology</option>
+                    <option value="MATH">Mathematics</option>
+                    <option value="JAVA">Java</option>
+                    <option value="DBMS">Database Management System</option>
+                    <option value="C">C Programming</option>
+                    <option value="PYTHON">Python</option>
+                </select>
+            </p>
+            <button type="submit">Start Exam</button>
+        </form>
+    </div>
+
+    <footer>
+        All rights are reserved by Deepika 231FA04245
+    </footer>
+
+</body>
+</html>
