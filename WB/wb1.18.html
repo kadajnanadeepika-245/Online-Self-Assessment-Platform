@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PYTHON</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f4f8;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1 {
+      color: #007bff;
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    #quizForm {
+      width: 80%;
+      max-width: 800px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    #questionContainer {
+      margin-bottom: 20px;
+    }
+
+    .questionDiv {
+      background-color: #e9ecef;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      padding: 15px;
+      margin-bottom: 10px;
+    }
+
+    p {
+      font-size: 1.1em;
+      margin: 0 0 10px;
+    }
+
+    input[type="radio"] {
+      margin-right: 10px;
+      vertical-align: middle;
+    }
+
+    label {
+      margin-bottom: 5px;
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    button {
+      background-color: #28a745;
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      font-size: 1em;
+      margin-top: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #218838;
+    }
+
+    #timer {
+      font-size: 1.5em;
+      font-weight: bold;
+      color: #dc3545;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    #result {
+      font-size: 1.2em;
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    #pieChartContainer {
+      width: 100%;
+      height: 400px;
+      text-align: center;
+      margin-top: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #pieChart {
+      width: 80%;
+      max-width: 500px;
+      height: auto;
+    }
+
+    #reviewContainer {
+      display: none;
+      text-align: center;
+      padding: 20px;
+    }
+  </style>
+</head>
+<body>
+  <form id="quizForm">
+    <div>
+      <h1>PYTHON</h1>
+      <div id="timer">Time remaining: 5:00</div>
+    </div>
+    <div id="questionContainer"></div>
+    <div style="text-align: center;">
+      <button type="button" onclick="reviewAnswers()">Review</button>
+    </div>
+  </form>
+
+  <div id="reviewContainer">
+    <h2>Review Your Answers</h2>
+    <div id="reviewList"></div>
+    <button onclick="submitExam()">Submit Final Answers</button>
+  </div>
+
+  <div id="result"></div>
+  <div id="pieChartContainer">
+    <canvas id="pieChart"></canvas>
+  </div>
+
+  <audio id="alertAudio" src="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg"></audio>
+  <audio id="successAudio" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
+  <audio id="warningAudio" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg"></audio>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>nContainer = document.getElementById("questionContainer");
+        const questions = [
+  {
+    question: "Which of the following is a valid variable name in Python?",
+    options: ["my_variable", "123variable", "_variable"],
+    correctIndex: 0
+  },
+  {
+    question: "Which of the following is a mutable data type in Python?",
+    options: ["list", "tuple", "str"],
+    correctIndex: 0
+  },
+  {
+    question: "What will be the output of the following code: print('Hello' + ' ' + 'World')?",
+    options: ["Hello World", "HelloWorld", "Error"],
+    correctIndex: 0
+  },
+  {
+    question: "Which of the following is used to handle exceptions in Python?",
+    options: ["try-except", "catch-finally", "throw-catch"],
+    correctIndex: 0
+  },
+  {
+    question: "Which of the following methods is used to add an element at the end of a list in Python?",
+    options: ["append()", "add()", "insert()"],
+    correctIndex: 0
+  },
+  {
+    question: "What will be the output of print('abc' * 3)?",
+    options: ["abcabcabc", "Error", "abc"],
+    correctIndex: 0
+  },
+  {
+    question: "Which operator is used for exponentiation in Python?",
+    options: ["**", "^", "//"],
+    correctIndex: 0
+  },
+  {
+    question: "Which of the following is used to define a lambda function in Python?",
+    options: ["lambda", "func", "anonymous"],
+    correctIndex: 0
+  },
+  {
+    question: "Which of the following is the correct way to check if a value is present in a list?",
+    options: ["value in list", "list.contains(value)", "list.has(value)"],
+    correctIndex: 0
+  },
+  {
+    question: "What does the 'continue' statement do in a loop?",
+    options: ["Skips the current iteration", "Exits the loop", "Restarts the loop"],
+    correctIndex: 0
+  },
+  {
+    question: "What is the output of print(2 ** 3)?",
+    options: ["8", "6", "16"],
+    correctIndex: 0
+  },
+  {
+    question: "Which of these is the correct way to declare a function in Python?",
+    options: ["def my_func():", "function my_func():", "def myFunc{};"],
+    correctIndex: 0
+  },
+  {
+    question: "Which statement is used to exit a loop in Python?",
+    options: ["break", "exit", "stop"],
+    correctIndex: 0
+  },
+  {
+    question: "Which of the following data types is immutable?",
+    options: ["tuple", "list", "set"],
+    correctIndex: 0
+  },
+  {
+    question: "What does 'self' refer to in Python?",
+    options: ["The instance of the class", "The method of the class", "The class itself"],
+    correctIndex: 0
+  },
+  {
+    question: "How do you define a class in Python?",
+    options: ["class MyClass:", "class MyClass{}", "class:MyClass"],
+    correctIndex: 0
+  },
+  {
+    question: "Which function is used to get the length of an object in Python?",
+    options: ["len()", "length()", "size()"],
+    correctIndex: 0
+  },
+  {
+    question: "What does the 'is' keyword do in Python?",
+    options: ["Checks if two objects are the same", "Compares the values of two objects", "Checks if an object exists"],
+    correctIndex: 0
+  },
+  {
+    question: "Which of the following is a built-in data structure in Python?",
+    options: ["list", "array", "hash"],
+    correctIndex: 0
+  }
+];
+
+        function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    const selectedQuestions = shuffle([...questions]).slice(0, 10);
+    selectedQuestions.forEach((q, idx) => {
+      const qDiv = document.createElement("div");
+      qDiv.className = 'questionDiv';
+
+      const shuffledOptions = shuffle(q.options.map((text, i) => ({
+        text,
+        isCorrect: i === q.correctIndex
+      })));
+
+      q.shuffled = shuffledOptions;
+
+      qDiv.innerHTML = `<p>${q.question}</p>` + shuffledOptions.map((opt, i) => `
+        <input type="radio" id="q${idx}opt${i}" name="q${idx}" value="${opt.isCorrect}">
+        <label for="q${idx}opt${i}">${opt.text}</label><br>
+      `).join('');
+
+      questionContainer.appendChild(qDiv);
+    });
+
+    let timeLeft = 300;
+    const timerAudio = document.getElementById("alertAudio");
+    const warningAudio = document.getElementById("warningAudio");
+
+    function updateTimer() {
+      const min = Math.floor(timeLeft / 60);
+      const sec = timeLeft % 60;
+      document.getElementById("timer").textContent = `Time remaining: ${min}:${sec < 10 ? '0' : ''}${sec}`;
+      if (timeLeft > 0) {
+        timeLeft--;
+        setTimeout(updateTimer, 1000);
+      } else {
+        timerAudio.play();
+        reviewAnswers();
+      }
+    }
+
+    updateTimer();
+
+    let tabSwitchCount = 0;
+    document.addEventListener("visibilitychange", function () {
+      if (document.hidden) {
+        tabSwitchCount++;
+        if (tabSwitchCount === 1) {
+          warningAudio.play();
+          alert("Warning! You switched tabs. If you switch again, the exam will be submitted.");
+        } else {
+          alert("Second tab switch detected. Submitting the exam.");
+          submitExam();
+        }
+      }
+    });
+
+    function reviewAnswers() {
+      document.getElementById("quizForm").style.display = 'none';
+      const reviewList = document.getElementById("reviewList");
+      reviewList.innerHTML = "";
+      selectedQuestions.forEach((q, idx) => {
+        const selected = document.querySelector(`input[name="q${idx}"]:checked`);
+        const answer = selected ? selected.nextElementSibling.textContent : "Not answered";
+        reviewList.innerHTML += `<p><strong>Q${idx + 1}:</strong> ${q.question}<br>Selected: ${answer}</p>`;
+      });
+      document.getElementById("reviewContainer").style.display = "block";
+    }
+
+    function submitExam() {
+      const successAudio = document.getElementById("successAudio");
+      let correct = 0;
+      let attempted = 0;
+      selectedQuestions.forEach((q, idx) => {
+        const sel = document.querySelector(`input[name="q${idx}"]:checked`);
+        if (sel) {
+          attempted++;
+          if (sel.value === "true") correct++;
+        }
+      });
+
+      const total = selectedQuestions.length;
+      document.getElementById("result").textContent = `You got ${correct} out of ${total} correct!`; 
+
+      const ctx = document.getElementById("pieChart").getContext("2d");
+      new Chart(ctx, {
+        type: "pie",
+        data: {
+          labels: ["Correct", "Incorrect", "Not Attempted"],
+          datasets: [{
+            data: [correct, total - correct, total - attempted],
+            backgroundColor: ["#28a745", "#dc3545", "#6c757d"],
+          }]
+        }
+      });
+
+      successAudio.play();
+    }
+  </script>
+</body>
+</html>
+

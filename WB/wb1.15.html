@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>JAVA</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f4f8;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1 {
+      color: #007bff;
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    #quizForm {
+      width: 80%;
+      max-width: 800px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    #questionContainer {
+      margin-bottom: 20px;
+    }
+
+    .questionDiv {
+      background-color: #e9ecef;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      padding: 15px;
+      margin-bottom: 10px;
+    }
+
+    p {
+      font-size: 1.1em;
+      margin: 0 0 10px;
+    }
+
+    input[type="radio"] {
+      margin-right: 10px;
+      vertical-align: middle;
+    }
+
+    label {
+      margin-bottom: 5px;
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    button {
+      background-color: #28a745;
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      font-size: 1em;
+      margin-top: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #218838;
+    }
+
+    #timer {
+      font-size: 1.5em;
+      font-weight: bold;
+      color: #dc3545;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    #result {
+      font-size: 1.2em;
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    #pieChartContainer {
+      width: 100%;
+      height: 400px;
+      text-align: center;
+      margin-top: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #pieChart {
+      width: 80%;
+      max-width: 500px;
+      height: auto;
+    }
+
+    #reviewContainer {
+      display: none;
+      text-align: center;
+      padding: 20px;
+    }
+  </style>
+</head>
+<body>
+  <form id="quizForm">
+    <div>
+      <h1>JAVA</h1>
+      <div id="timer">Time remaining: 5:00</div>
+    </div>
+    <div id="questionContainer"></div>
+    <div style="text-align: center;">
+      <button type="button" onclick="reviewAnswers()">Review</button>
+    </div>
+  </form>
+
+  <div id="reviewContainer">
+    <h2>Review Your Answers</h2>
+    <div id="reviewList"></div>
+    <button onclick="submitExam()">Submit Final Answers</button>
+  </div>
+
+  <div id="result"></div>
+  <div id="pieChartContainer">
+    <canvas id="pieChart"></canvas>
+  </div>
+
+  <audio id="alertAudio" src="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg"></audio>
+  <audio id="successAudio" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
+  <audio id="warningAudio" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg"></audio>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>nContainer = document.getElementById("questionContainer");
+      const questions = [
+  {
+    question: "What is the default value of an instance variable of type int in Java?",
+    options: ["0", "null", "1"],
+    correctIndex: 0
+  },
+  {
+    question: "Which keyword is used to prevent inheritance of a class?",
+    options: ["final", "static", "const"],
+    correctIndex: 0
+  },
+  {
+    question: "Which of the following is not a valid Java access modifier?",
+    options: ["protected", "private", "public static"],
+    correctIndex: 2
+  },
+  {
+    question: "What is the superclass of all Java classes?",
+    options: ["Object", "Main", "System"],
+    correctIndex: 0
+  },
+  {
+    question: "Which Java collection class is synchronized?",
+    options: ["Vector", "ArrayList", "HashSet"],
+    correctIndex: 0
+  },
+  {
+    question: "What is used to define an interface in Java?",
+    options: ["interface", "abstract", "implements"],
+    correctIndex: 0
+  },
+  {
+    question: "Which Java feature ensures that an object is not modified after creation?",
+    options: ["Immutability", "Encapsulation", "Polymorphism"],
+    correctIndex: 0
+  },
+  {
+    question: "Which of these is not a valid data type in Java?",
+    options: ["boolean", "double", "charstring"],
+    correctIndex: 2
+  },
+  {
+    question: "How many primitive data types are there in Java?",
+    options: ["8", "6", "10"],
+    correctIndex: 0
+  },
+  {
+    question: "What is the correct way to declare an array in Java?",
+    options: ["int[] arr;", "array<int> arr;", "arr[] int;"],
+    correctIndex: 0
+  },
+  {
+    question: "Which keyword is used to implement multiple inheritance in Java?",
+    options: ["interface", "extends", "implements"],
+    correctIndex: 0
+  },
+  {
+    question: "Which Java keyword is used for exception handling?",
+    options: ["try", "catch", "throw"],
+    correctIndex: 0
+  },
+  {
+    question: "What is the purpose of the 'DOMContentLoaded' event in JavaScript?",
+    options: [
+      "To execute code after the HTML document has been completely loaded and parsed",
+      "To load external scripts",
+      "To update the style of the page"
+    ],
+    correctIndex: 0
+  }
+];
+
+
+        function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    const selectedQuestions = shuffle([...questions]).slice(0, 10);
+    selectedQuestions.forEach((q, idx) => {
+      const qDiv = document.createElement("div");
+      qDiv.className = 'questionDiv';
+
+      const shuffledOptions = shuffle(q.options.map((text, i) => ({
+        text,
+        isCorrect: i === q.correctIndex
+      })));
+
+      q.shuffled = shuffledOptions;
+
+      qDiv.innerHTML = `<p>${q.question}</p>` + shuffledOptions.map((opt, i) => `
+        <input type="radio" id="q${idx}opt${i}" name="q${idx}" value="${opt.isCorrect}">
+        <label for="q${idx}opt${i}">${opt.text}</label><br>
+      `).join('');
+
+      questionContainer.appendChild(qDiv);
+    });
+
+    let timeLeft = 300;
+    const timerAudio = document.getElementById("alertAudio");
+    const warningAudio = document.getElementById("warningAudio");
+
+    function updateTimer() {
+      const min = Math.floor(timeLeft / 60);
+      const sec = timeLeft % 60;
+      document.getElementById("timer").textContent = `Time remaining: ${min}:${sec < 10 ? '0' : ''}${sec}`;
+      if (timeLeft > 0) {
+        timeLeft--;
+        setTimeout(updateTimer, 1000);
+      } else {
+        timerAudio.play();
+        reviewAnswers();
+      }
+    }
+
+    updateTimer();
+
+    let tabSwitchCount = 0;
+    document.addEventListener("visibilitychange", function () {
+      if (document.hidden) {
+        tabSwitchCount++;
+        if (tabSwitchCount === 1) {
+          warningAudio.play();
+          alert("Warning! You switched tabs. If you switch again, the exam will be submitted.");
+        } else {
+          alert("Second tab switch detected. Submitting the exam.");
+          submitExam();
+        }
+      }
+    });
+
+    function reviewAnswers() {
+      document.getElementById("quizForm").style.display = 'none';
+      const reviewList = document.getElementById("reviewList");
+      reviewList.innerHTML = "";
+      selectedQuestions.forEach((q, idx) => {
+        const selected = document.querySelector(`input[name="q${idx}"]:checked`);
+        const answer = selected ? selected.nextElementSibling.textContent : "Not answered";
+        reviewList.innerHTML += `<p><strong>Q${idx + 1}:</strong> ${q.question}<br>Selected: ${answer}</p>`;
+      });
+      document.getElementById("reviewContainer").style.display = "block";
+    }
+
+    function submitExam() {
+      const successAudio = document.getElementById("successAudio");
+      let correct = 0;
+      let attempted = 0;
+      selectedQuestions.forEach((q, idx) => {
+        const sel = document.querySelector(`input[name="q${idx}"]:checked`);
+        if (sel) {
+          attempted++;
+          if (sel.value === "true") correct++;
+        }
+      });
+
+      const total = selectedQuestions.length;
+      document.getElementById("result").textContent = `You got ${correct} out of ${total} correct!`; 
+
+      const ctx = document.getElementById("pieChart").getContext("2d");
+      new Chart(ctx, {
+        type: "pie",
+        data: {
+          labels: ["Correct", "Incorrect", "Not Attempted"],
+          datasets: [{
+            data: [correct, total - correct, total - attempted],
+            backgroundColor: ["#28a745", "#dc3545", "#6c757d"],
+          }]
+        }
+      });
+
+      successAudio.play();
+    }
+  </script>
+</body>
+</html>
+
